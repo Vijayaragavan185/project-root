@@ -1,37 +1,33 @@
 const Location = require('../models/locationModel');
 
 const locationController = {
-  // Update user location
   updateLocation: async (req, res) => {
     try {
-      const { userId, latitude, longitude, speed } = req.body;
+      const { userId, latitude, longitude, speed, isPothole, severity } = req.body;
       
       const location = new Location({
         userId,
         latitude,
         longitude,
         speed,
-        mode: speed > 5 ? 'vehicle' : 'walking' // Simple speed-based mode detection
+        isPothole,
+        severity
       });
 
       await location.save();
-      res.status(201).json({ message: 'Location updated' });
+      res.status(201).json({ message: 'Location updated', isPothole });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
 
-  // Get user's latest location
-  getLocation: async (req, res) => {
+  getPotholes: async (req, res) => {
     try {
-      const { userId } = req.params;
-      const location = await Location.findOne({ userId }).sort({ timestamp: -1 });
+      const potholes = await Location.find({ 
+        isPothole: true 
+      }).sort({ timestamp: -1 });
       
-      if (!location) {
-        return res.status(404).json({ message: 'Location not found' });
-      }
-
-      res.json(location);
+      res.json(potholes);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

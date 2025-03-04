@@ -12,6 +12,10 @@ const locationService = {
     });
     return response.data;
   },
+  getPotholeHistory: async () => {
+    const response = await axios.get(`${API_URL}/location/potholes`);
+    return response.data;
+  },
 
   getLocation: async (userId) => {
     const response = await axios.get(`${API_URL}/location/${userId}`);
